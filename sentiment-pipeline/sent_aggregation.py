@@ -9,7 +9,7 @@ from datasets import load_dataset, Dataset
 # ---------------------------------------------------------------------------
 SOURCE_DATASET = "mateiplescan/processed-financial-news-XXL-enriched"
 TARGET_DATASET = "mateiplescan/processed-financial-news-XXL-aggregated"
-HF_TOKEN = "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"
+HF_TOKEN = "<TOKEN>"
 
 logging.basicConfig(
     level=logging.INFO,
