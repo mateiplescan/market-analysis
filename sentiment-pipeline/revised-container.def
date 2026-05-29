@@ -1,0 +1,60 @@
+Bootstrap: docker
+From: pytorch/pytorch:2.2.0-cuda11.8-cudnn8-runtime
+
+%post
+    set -ex
+    
+    export DEBIAN_FRONTEND=noninteractive
+
+    # Workaround for apt privilege drop failing in rootless namespaces
+    echo 'APT::Sandbox::User "root";' > /etc/apt/apt.conf.d/99-sandboxroot
+
+    echo "[*] Update system"
+    apt update -y && apt upgrade -y
+
+    echo "[*] Install system dependencies"
+    apt install -y --no-install-recommends git python3-pip wget python3-venv
+
+    echo "[*] Upgrade pip"
+    pip install --upgrade pip
+
+    echo "[*] Install requirements"
+    pip install \
+        "google-generativeai" \
+        "google-genai" \
+        "huggingface-hub" \
+        "transformers>=4.30.0,<5.0.0" \
+        "accelerate" \
+        "pillow" \
+        "sentence_transformers" \
+        "together" \
+        "numpy<2" \
+        "trl" \
+        "peft" \
+        "spacy" \
+        "textgrad" \
+        "scikit-learn" \
+        "wordfreq" \
+        "nltk" \
+        "anthropic" \
+        "matplotlib" \
+        "datasets" \
+        "pandas" \
+        "tqdm" \
+        "tensorboard"
+
+    echo "[*] Create entrypoint script"
+    cat << 'EOF' > /entrypoint.sh
+#!/bin/bash
+exec "$@"
+EOF
+
+    chmod +x /entrypoint.sh
+    
+    echo "[*] Build completed successfully"
+
+%environment
+    export PATH="/opt/conda/bin:$PATH"
+
+%runscript
+    exec /entrypoint.sh "$@"
